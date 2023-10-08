@@ -1,7 +1,7 @@
 # RH ANALYTICS
 Segundo o blog do "Great Place to Work" fatores que levam ao turnover 
-de funionários são: (a) contratos de flexíveis de curto prazo e freelance, que geram mais autonomia; 
-(b) cultura de trabalho remoto e agenda flexivel; (c) ausencia de oportunidades de progressão na carreira; (d) inadequado salários ou benefícios; (e) insatisfação com a liderança e cultura organizacional
+de funionários são: (a) contratos flexíveis de curto prazo e freelance, que geram mais autonomia; 
+(b) cultura de trabalho remoto e agenda flexivel; (c) ausencia de oportunidades de progressão na carreira; (d) inadequados salários ou benefícios; (e) insatisfação com a liderança e cultura organizacional
 (e) falta de equilibrio entre bem-estar e stress do trabalho.
 
 Este projeto tem o objetivo de analisar os fatores que levam colaboradores a rejeitarem promoções para novas posições/cargos e, consequentemente, possuem mais probabilidade de pedir demissão.
