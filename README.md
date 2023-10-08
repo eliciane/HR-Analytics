@@ -10,6 +10,8 @@ Em razão de já existir uma classificação prévia dos colaboradores, rotulado
 
 Primeiramente, as features foram selecionadas pela técnica de análise de correlação. E então, foram empregados algoritmos de Random Forest e Regressão logística.
 
+Este projeto também pode ser visualizado no artigo pelo link: 
+[https://medium.com/@elicianems/people-analytics-emprego-de-random-forest-e-regress%C3%A3o-log%C3%ADstica-c33b3c08334e](https://medium.com/@elicianems/people-analytics-emprego-de-random-forest-e-regress%C3%A3o-log%C3%ADstica-c33b3c08334e)
 
 A base de dados analisada neste projeto é de um famoso dataset da IBM, que contém 35 variáveis:
 [https://www.kaggle.com/pavansubhasht/ibm-hr-analytics-attrition-dataset](https://www.kaggle.com/pavansubhasht/ibm-hr-analytics-attrition-dataset.)
@@ -84,7 +86,5 @@ A base de dados analisada neste projeto é de um famoso dataset da IBM, que cont
 
 34- YearsWithCurrManager: Years with the current manager.
 
-Foi empregada a regressão logística e a técnica SMOTE.
- 
 Referência pesquisada:
 Great Place to Work (2023). [https://www.greatplacetowork.in/understanding-the-factors-driving-employee-attrition-in-the-modern-workplace]()

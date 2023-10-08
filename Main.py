@@ -6,8 +6,6 @@ Fatores como salários, políticas da empresa, oportunidade de crescimento e rec
 
 '''
 
-
-
 # importar bibliotecas
 
 import pandas as pd
@@ -51,7 +49,6 @@ print('\n tamanho do dataset:', df2.shape)
 #checar valores nulos
 print(df2.isnull().sum())
 
-#print(telecom['TARGET'].value_counts()[1])
 print('\n quantos colaboradores não solicitaram demissão:', df2['Attrition'].value_counts()[0])
 print('\n quantos colaboradores solicitaram demissão:', df2['Attrition'].value_counts()[1])
 print('\n percentual de demissão', ((df2['Attrition'].value_counts()[1] / df2['Attrition'].value_counts()[0])*100))
@@ -66,10 +63,9 @@ print(num)
 
 # imprimir os valores unicos de cada variável categórica
 for i in cat: # para cada elemento em variáveis categóricas
-    print('Unique values of ', i, set(df2[i])) #print valores unicos em cada variável
+    print('Escalas ou valores únicos da variável categórica ', i, set(df2[i])) #print valores unicos em cada variável
 
-
-# remover 4 colunas que não serão usadas
+# remover 3 colunas que não serão usadas
 df2 = df2.drop(['Over18', 'EmployeeCount','StandardHours'],axis=1)
 
 # fazer uma cópia do dataset
@@ -81,7 +77,7 @@ num = df_copy.select_dtypes(['number']).columns
 print(cat)
 print(num)
 
-# converter variáveis categóricas com somente 2 valores distintos para numerica
+# converter variáveis categóricas com somente 2 valores distintos 
 label_encoder=LabelEncoder()
 df_copy['Attrition']=label_encoder.fit_transform(df2['Attrition'])
 df_copy['OverTime']=label_encoder.fit_transform(df2['OverTime'])
@@ -92,6 +88,7 @@ df_copy=pd.get_dummies(df_copy, columns=['BusinessTravel', 'Department', 'Educat
 
 print(df_copy.head())
 print(df_copy.shape)
+
 
 #padronizar/normalizar as variáveis numéricas
 var_num = df_copy[['Age', 'DailyRate', 'DistanceFromHome', 'Education',
@@ -148,8 +145,6 @@ print(y_test_EN.shape)
 y_test = y_test_EN['Attrition']
 y_train = y_train_EN['Attrition']
 
-
-
 # fazer a correlação com dados de treino
 corrmat = X_train.corr()
 corrdf = corrmat.where(np.triu(np.ones(corrmat.shape), k=1).astype(np.bool))
@@ -161,20 +156,19 @@ corrdf['Correlation'] = abs(corrdf['Correlation'])
 matrix= corrdf.sort_values(by = 'Correlation', ascending = False).head(50)
 print(matrix)
 
-# with the following function we can select highly correlated features
-# it will remove the first feature that is correlated with anything other feature
+# com a seguinte função podemos selecionar as features altamente correlacionadas e, posteriomente fazer a remoção das mesmas.
 
 def correlation(dataset, threshold):
-    col_corr = set()  # Set of all the names of correlated columns
+    col_corr = set()  # conjunto das fetures correlacionadas
     corr_matrix = dataset.corr()
     for i in range(len(corr_matrix.columns)):
         for j in range(i):
-            if abs(corr_matrix.iloc[i, j]) > threshold: # we are interested in absolute coeff value
-                colname = corr_matrix.columns[i]  # getting the name of column
+            if abs(corr_matrix.iloc[i, j]) > threshold: # iremos buscar as correlações em valores absolutos
+                colname = corr_matrix.columns[i]  # vamos obter o nome das colunas
                 col_corr.add(colname)
     return col_corr
 
-corr_features = correlation(X_train, 0.7)
+corr_features = correlation(X_train, 0.75)
 print(len(set(corr_features)))
 
 print(corr_features)
@@ -182,8 +176,7 @@ print(corr_features)
 X_train = X_train.drop(corr_features,axis=1) #excluir variáveis que não tiveram correlação
 X_test = X_test.drop(corr_features,axis=1)
 
-
-# fazer a correlação com dados de treino
+# Imprimir as correlações novamente com os dados de treino, apenas para visualização
 corrmat = X_train.corr()
 corrdf = corrmat.where(np.triu(np.ones(corrmat.shape), k=1).astype(np.bool))
 corrdf = corrdf.unstack().reset_index()
@@ -192,13 +185,14 @@ corrdf.dropna(subset = ['Correlation'], inplace = True)
 corrdf['Correlation'] = round(corrdf['Correlation'], 2)
 corrdf['Correlation'] = abs(corrdf['Correlation'])
 matrix= corrdf.sort_values(by = 'Correlation', ascending = False).head(50)
-#print(matrix)
+print(matrix)
 
 
 #plt.figure(figsize = (50,25))
 plt.figure(figsize = (12,10))
 sns.heatmap(X_train.corr(),annot = True,cmap="tab20c", fmt = ".2f")
 #plt.show()
+
 
 # DESENVOLVER O MODELO - DECISION TREE
 model = DecisionTreeClassifier()
@@ -249,9 +243,6 @@ corrdf['Correlation'] = abs(corrdf['Correlation'])
 matrix= corrdf.sort_values(by = 'Correlation', ascending = False).head(50)
 #print(matrix)
 
-# with the following function we can select highly correlated features
-# it will remove the first feature that is correlated with anything other feature
-
 def correlation(dataset, threshold):
     col_corr = set()  # Set of all the names of correlated columns
     corr_matrix = dataset.corr()
@@ -268,26 +259,8 @@ print(len(set(corr_features)))
 print(corr_features)
 
 
-
-
-
 X_train = X_train.drop(corr_features,axis=1)
 X_test = X_test.drop(corr_features,axis=1)
-
-
-
-# fazer a correlação com dados de treino
-corrmat = X_train.corr()
-corrdf = corrmat.where(np.triu(np.ones(corrmat.shape), k=1).astype(np.bool))
-corrdf = corrdf.unstack().reset_index()
-corrdf.columns = ['Var1', 'Var2', 'Correlation']
-corrdf.dropna(subset = ['Correlation'], inplace = True)
-corrdf['Correlation'] = round(corrdf['Correlation'], 2)
-corrdf['Correlation'] = abs(corrdf['Correlation'])
-matrix= corrdf.sort_values(by = 'Correlation', ascending = False).head(50)
-#print(matrix)
-
-
 
 X = pd.DataFrame(df_copy.drop(columns=['Attrition', 'EmployeeNumber']))
 
@@ -301,66 +274,38 @@ y_train_df = pd.DataFrame(y_train)
 print(y_train_df)
 print(y_train_df.info())
 
+# Imputar dados
+
 print('\n quantos colaboradores não solicitaram demissão:', y_train_df['Attrition'].value_counts()[0])
 print('\n quantos colaboradores solicitaram demissão:', y_train_df['Attrition'].value_counts()[1])
+print('\n percentual de demissão', ((y_train_df['Attrition'].value_counts()[1] / y_train_df['Attrition'].value_counts()[0])*100))
 
-
-
-
-# Imputar dados
 oversampler=SMOTE(random_state=0)
 smote_train, smote_target = oversampler.fit_resample(X_train,y_train)
 
 # transformar o target em dataframe para verificar posteriormente
 smote_target_df = pd.DataFrame(smote_target)
 
-print(smote_target_df)
-print(smote_target_df.info())
+#print(smote_target_df)
+#print(smote_target_df.info())
 
-print('\n quantos colaboradores não solicitaram demissão:', smote_target_df['Attrition'].value_counts()[0])
-print('\n quantos colaboradores solicitaram demissão:', smote_target_df['Attrition'].value_counts()[1])
-
-
-
-
-model = DecisionTreeClassifier()
-
-# fit the model with the training data
-model.fit(X_train,y_train)
-
-DecisionTreeClassifier()
-
-# predict the target on the train dataset
-predict_train = model.predict(X_train)
-print(predict_train)
-
-trainaccuracy = accuracy_score(y_train,predict_train)
-print('accuracy_score on train dataset : ', trainaccuracy)
-
-
-
+print('\n quantos colaboradores não solicitaram demissão, usando a técnica SMOTE:', smote_target_df['Attrition'].value_counts()[0])
+print('\n quantos colaboradores solicitaram demissão, usando a técnica SMOTE:', smote_target_df['Attrition'].value_counts()[1])
 
 # RANDOM FOREST
-
 rfc = RandomForestClassifier()
 rfc = rfc.fit(smote_train , smote_target)
 y_pred = rfc.predict(X_test)
 
-print ('\n acuracia RANDOM FOREST:',metrics.accuracy_score(y_test, y_pred))
-
-
-
-
-
+print ('\n acurácia RANDOM FOREST, imputando dados:', round(metrics.accuracy_score(y_test, y_pred), 2))
 
 
 # REGRESSÃO LOGÍSTICA
-
 log_reg=LogisticRegression(C=1000,max_iter=10000)
 log_reg.fit(smote_train , smote_target)
 y_pred_lg = log_reg.predict(X_test)
 
-print ('\n acurácia regresão logística:', metrics.accuracy_score(y_test, y_pred_lg))
+print ('\n acurácia REGRESSÃO LOGÍSTICA, imputando dados:', round(metrics.accuracy_score(y_test, y_pred_lg), 2))
 
 # separar variáveis preditoras (X) e variável resposta (y)
 X = pd.DataFrame(df_copy.drop(columns=['Attrition', 'EmployeeNumber', 'BusinessTravel_Travel_Rarely', 'YearsWithCurrManager', 'JobRole_Sales Executive', 'YearsInCurrentRole', 'MonthlyIncome',
@@ -368,25 +313,65 @@ X = pd.DataFrame(df_copy.drop(columns=['Attrition', 'EmployeeNumber', 'BusinessT
 #y = pd.DataFrame(df_copy.Attrition).values.reshape(-1, 1)
 y = pd.DataFrame(df_copy[['Attrition', 'EmployeeNumber']])  #guardar o numero do funcionário para usar posteriormente quando obtiver as probalidades
 #print(y.head())
-print(y.head())
-print(X)
+#print(y.head())
+#print(X)
 
 # dividir os dados em treino e teste
 X_train, X_test, y_train_EN, y_test_EN = train_test_split(X, y, train_size=0.7, test_size=0.3, random_state=42)
 
 #Nos dados de y_test e y_train manter somente o TARGET para o rodar o modelo, excluindo O numero do colaborador
 print(y_test_EN) # aqui o numero do colaborador foi mantido para posteriormente, juntar com o dataset de predições
-print(y_test_EN.shape)
+#print(y_test_EN.shape)
 y_test = y_test_EN['Attrition']
 y_train = y_train_EN['Attrition']
 
+# RANDOM FOREST NÃO IMPUTAR DADOS
+rfc = RandomForestClassifier()
+rfc = rfc.fit(X_train, y_train)
+y_pred = rfc.predict(X_test)
 
+print ('\n acurácia RANDOM FOREST -NÃO IMPUTAR DADOS:',round(metrics.accuracy_score(y_test, y_pred),2))
+
+# Imprimir a matriz de confusão
+tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
+print('\nResultados da avaliação do modelo para RANDOM FOREST' '\nTrue negatives: ', tn, '\nFalse positives: ',
+      fp, '\nFalse negatives: ', fn, '\nTrue positives: ', tp)
+
+print(classification_report(y_test, y_pred))
+
+# Confusion matrix
+confusion = metrics.confusion_matrix(y_test, y_pred) # fazer a matriz de confusão pelo pacote sklearn
+print(confusion)
+
+plt.figure(figsize = (3,1))
+sns.heatmap(confusion, cmap='Blues', annot=True, fmt='.6g')
+#print(confusion)
+plt.plot(confusion)
+#plt.show()
+
+# REGRESSÃO LOGÍSTICA NÃO IMPUTAR DADOS
 log_reg=LogisticRegression(C=1000,max_iter=10000)
 log_reg.fit(X_train, y_train)
 y_pred_lg = log_reg.predict(X_test)
 
-print ('\n acurácia regresão logística:', metrics.accuracy_score(y_test, y_pred_lg))
+print ('\n acurácia REGRESSÃO LOGÍSTICA - NÃO IMPUTAR DADOS:', round(metrics.accuracy_score(y_test, y_pred_lg),2))
 
+# Imprimir a matriz de confusão
+tn, fp, fn, tp = confusion_matrix(y_test, y_pred_lg).ravel()
+print('\nResultados da avaliação do modelo para REGRESSÃO LOGÍSTICA' '\nTrue negatives: ', tn, '\nFalse positives: ',
+      fp, '\nFalse negatives: ', fn, '\nTrue positives: ', tp)
+
+print(classification_report(y_test, y_pred_lg))
+
+# Confusion matrix
+confusion = metrics.confusion_matrix(y_test, y_pred_lg) # fazer a matriz de confusão pelo pacote sklearn
+print(confusion)
+
+plt.figure(figsize = (8,5))
+sns.heatmap(confusion, cmap='Blues', annot=True, fmt='.6g')
+#print(confusion)
+plt.plot(confusion)
+plt.show()
 
 ### FAZENDO A PREDIÇÃO, USANDO PREDICT_PROB PARA SAIR AS PROBABILIADES AGORA .predict_proba do sklearn
 prob_previsao = log_reg.predict_proba(X_train)[:,1]
@@ -406,16 +391,6 @@ print(preds)
 num_rows = prob_previsao.shape[0]
 print("O número de linhas de probabilidades é:", num_rows)
 
-
-
-# Imprimir a matriz de confusão
-tn, fp, fn, tp = confusion_matrix(y_test, y_pred_lg).ravel()
-print('True negatives: ', tn, '\nFalse positives: ', fp, '\nFalse negatives: ', fn, '\nTrue positives: ', tp)
-
-
-print(classification_report(y_test, y_pred_lg))
-
-
 # EXPORTAR AS PREDIÇÕES
 # Converter o array das previsões de probabilidades do mau pagador em dataframe
 y_pred_df = pd.DataFrame(prob_previsao)
@@ -425,9 +400,6 @@ print(y_pred_df.tail(50))
 #y_pred_1 = y_pred_df.iloc[:,[1]]
 #print(y_pred_1.shape)
 #print(y_pred_1.head())
-
-
-
 
 # Tazer o dataframe origninal com as colunas CONTA_CREDITO e TARGET
 y_train_EN = y_train_EN.reset_index(drop=True)
@@ -452,4 +424,14 @@ y_pred_final = y_pred_final.reindex(['EmployeeNumber','Attrition','TARGET_Prob']
 # VER COMO FICOU O DAFRAME FINAL
 print(y_pred_final.head())
 
+y_pred_final['Attrition'] = y_pred_final['Attrition'].astype(str)
+y_pred_final['EmployeeNumber'] = y_pred_final['EmployeeNumber'].astype(str)
+
+#Juntar a coluna de total faturado no dataset de todos cadastros e duplicadas
+df2['Attrition'] = df2['Attrition'].astype(str)
+df2['EmployeeNumber'] = df2['EmployeeNumber'].astype(str)
+df2 = df2.merge(y_pred_final, how='inner', on=['EmployeeNumber'])
+print(df2.info())
+
+df2.to_excel('C:/Users/eliciane/Documents/Projeto_PeopleAnalytcs/archive_IBM/dataset-final.xlsx', index=False)
 
